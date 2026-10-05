@@ -1,0 +1,1 @@
+.venv/\n__pycache__/\n*.pyc\n.pytest_cache/\n*.db\n*.csv\nbuild/*\n.DS_Store\n.idea/\n.vscode/\n
