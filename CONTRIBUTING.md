@@ -1,0 +1,1 @@
+# Contributing\n\n1. Create a feature branch.\n2. Keep changes focused and documented.\n3. Run `pytest -q` before submitting a pull request.\n4. Keep all CAN demonstrations confined to `vcan*` interfaces.\n5. Add or update tests for detection logic changes.\n
