@@ -1,0 +1,1 @@
+python-can>=4.5,<5\nnumpy>=1.26,<3\nscikit-learn>=1.5,<2\nPyQt6>=6.7,<7\nmatplotlib>=3.9,<4\npytest>=8,<9\n
