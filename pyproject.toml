@@ -1,1 +1,21 @@
-[build-system]\nrequires = ["setuptools>=68"]\nbuild-backend = "setuptools.build_meta"\n\n[project]\nname = "can-sentinel"\nversion = "2.0.0"\ndescription = "SOC-style automotive ECU intrusion detection lab using virtual CAN"\nrequires-python = ">=3.10"\nlicense = {file = "LICENSE"}\n\ndependencies = [\n  "python-can>=4.5,<5",\n  "numpy>=1.26,<3",\n  "scikit-learn>=1.5,<2",\n  "PyQt6>=6.7,<7",\n  "matplotlib>=3.9,<4",\n]\n\n[tool.pytest.ini_options]\npythonpath = ["."]\n
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "can-sentinel"
+version = "2.0.0"
+description = "SOC-style automotive ECU intrusion detection lab using virtual CAN"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+
+dependencies = [
+  "python-can>=4.5,<5",
+  "numpy>=1.26,<3",
+  "scikit-learn>=1.5,<2",
+  "PyQt6>=6.7,<7",
+  "matplotlib>=3.9,<4",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
