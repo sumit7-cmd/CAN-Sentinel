@@ -1,0 +1,1 @@
+#!/usr/bin/env bash\nset -e\nsource .venv/bin/activate\npython src/app.py\n
