@@ -1,4 +1,4 @@
-# CAN-Sentinel V2
+# CAN-Sentinel
 
 [![Tests](https://github.com/sumit7-cmd/CAN-Sentinel-V2/actions/workflows/tests.yml/badge.svg)](https://github.com/sumit7-cmd/CAN-Sentinel-V2/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
