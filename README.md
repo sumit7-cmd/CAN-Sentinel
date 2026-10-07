@@ -76,7 +76,7 @@ V2 adds:
 
 The following sections document the implementation represented in **Project Presentation slides 4, 5, 6, 7, and 9**.
 
-### Slide 4 — System Architecture
+### System Architecture
 
 CAN-Sentinel follows an end-to-end defensive automotive SOC pipeline:
 
@@ -125,7 +125,7 @@ Implementation mapping:
 
 The monitor explicitly enforces the virtual-lab boundary by refusing interfaces that do not start with \`vcan\`.
 
-### Slide 5 — Baseline ECU Traffic
+### Baseline ECU Traffic
 
 Calibration uses a synthetic vehicle communication profile:
 
@@ -146,7 +146,7 @@ During calibration, the monitor learns:
 
 The dashboard progresses through **CALIBRATING** windows and then changes to **MONITORING** once a usable baseline has been established.
 
-### Slide 6 — Detection Features
+### Detection Features
 
 Each monitoring window is represented by an eight-dimensional feature vector:
 
@@ -165,7 +165,7 @@ The same feature representation is used for both calibration and live monitoring
 
 The implementation is in \`src/detection.py\` through \`build_features()\`.
 
-### Slide 7 — Detection & Classification
+### Detection & Classification
 
 CAN-Sentinel combines **explainable rule-based evidence** with **Isolation Forest anomaly scoring**.
 
@@ -189,7 +189,7 @@ The classifier records:
 
 The implementation is centered on \`classify()\` and \`severity_for()\` in \`src/detection.py\`.
 
-### Slide 9 — SOC Dashboard
+### SOC Dashboard
 
 The operator-facing PyQt6 dashboard is implemented in \`src/app.py\`.
 
