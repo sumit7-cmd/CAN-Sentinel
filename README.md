@@ -70,6 +70,180 @@ V2 adds:
                                   Incidents
 ```
 
+---
+
+## Presentation Implementation Details
+
+The following sections document the implementation represented in **Project Presentation slides 4, 5, 6, 7, and 9**.
+
+### Slide 4 — System Architecture
+
+CAN-Sentinel follows an end-to-end defensive automotive SOC pipeline:
+
+\`\`\`text
+Synthetic ECU Traffic
+        |
+        v
+     Linux vcan0
+        |
+        +--------------> C SocketCAN Raw Sniffer
+        |
+        v
+   Python CAN Monitor
+        |
+        v
+ Feature Extraction
+ + ECU Fingerprinting
+        |
+        +--------------> Isolation Forest
+        |
+        +--------------> Detection Rules
+                               |
+                               v
+                    Incident Classification
+                               |
+                     +---------+---------+
+                     |                   |
+                     v                   v
+               SQLite Evidence      PyQt6 SOC UI
+\`\`\`
+
+Implementation mapping:
+
+| Layer | Repository implementation |
+|---|---|
+| Synthetic vehicle traffic | \`scripts/mock_vehicle.py\` |
+| Virtual CAN lab | Linux SocketCAN \`vcan0\` |
+| Python monitoring | \`src/monitor.py\` |
+| Feature extraction | \`src/detection.py\` |
+| ECU behavioral profiles | \`src/ecu.py\` |
+| ML detection | Isolation Forest in \`src/detection.py\` |
+| Rule-based detection | \`classify()\` in \`src/detection.py\` |
+| Evidence storage | \`src/database.py\` / SQLite |
+| SOC dashboard | \`src/app.py\` |
+| Raw CAN capture | \`src/can_sniffer.c\` |
+
+The monitor explicitly enforces the virtual-lab boundary by refusing interfaces that do not start with \`vcan\`.
+
+### Slide 5 — Baseline ECU Traffic
+
+Calibration uses a synthetic vehicle communication profile:
+
+| CAN ID | Signal | Approx. Rate |
+|---|---|---:|
+| \`0x100\` | RPM | 20 Hz |
+| \`0x110\` | Speed | 10 Hz |
+| \`0x120\` | Temperature | 4 Hz |
+| \`0x200\` | Brake Status | 2 Hz |
+
+During calibration, the monitor learns:
+
+- Known CAN identifier set
+- Dominant DLC for each identifier
+- Aggregate baseline traffic rate
+- ECU behavioral profiles
+- Window-level feature vectors used to train the Isolation Forest model
+
+The dashboard progresses through **CALIBRATING** windows and then changes to **MONITORING** once a usable baseline has been established.
+
+### Slide 6 — Detection Features
+
+Each monitoring window is represented by an eight-dimensional feature vector:
+
+| # | Feature | Purpose |
+|---:|---|---|
+| 1 | Frames/sec (FPS) | Measures aggregate CAN traffic volume |
+| 2 | Unique IDs | Tracks identifier diversity |
+| 3 | Maximum ID rate | Detects unusually fast individual senders |
+| 4 | Mean IAT | Measures average inter-arrival timing |
+| 5 | IAT standard deviation | Captures timing variability |
+| 6 | Unknown IDs | Counts identifiers absent from calibration |
+| 7 | DLC deviations | Detects data-length changes from baseline |
+| 8 | Replay ratio | Measures repeated-payload behavior |
+
+The same feature representation is used for both calibration and live monitoring.
+
+The implementation is in \`src/detection.py\` through \`build_features()\`.
+
+### Slide 7 — Detection & Classification
+
+CAN-Sentinel combines **explainable rule-based evidence** with **Isolation Forest anomaly scoring**.
+
+Supported classifications:
+
+| Classification | Detection signal | Typical severity |
+|---|---|---|
+| **CAN Flood / DoS** | Very high per-ID transmission rate | CRITICAL / HIGH |
+| **Unknown-ID Injection** | Previously unseen ID transmitting at a sustained rate | CRITICAL / HIGH |
+| **Replay-like Burst** | High repeated-payload ratio | HIGH / MEDIUM |
+| **Payload/DLC Anomaly** | DLC differs from calibration | HIGH / MEDIUM |
+| **Behavioral Anomaly** | Isolation Forest anomaly score or aggregate traffic-rate jump | MEDIUM / LOW |
+
+The classifier records:
+
+- CAN ID associated with the alert
+- Isolation Forest anomaly score
+- Confidence
+- Detection reason
+- Evidence string containing window metrics
+
+The implementation is centered on \`classify()\` and \`severity_for()\` in \`src/detection.py\`.
+
+### Slide 9 — SOC Dashboard
+
+The operator-facing PyQt6 dashboard is implemented in \`src/app.py\`.
+
+#### Overview
+
+Provides:
+
+- Frames/sec
+- Unique CAN IDs
+- Isolation Forest anomaly score
+- Incident count
+- Top CAN ID
+- Current system state
+- Live CAN traffic chart
+- Live anomaly-score chart
+
+#### Traffic
+
+Displays recent CAN telemetry:
+
+- Timestamp
+- CAN ID
+- DLC
+- Payload
+
+#### ECU Fingerprints
+
+Displays learned and observed ECU behavior:
+
+- CAN ID
+- Observed message count
+- Rate
+- Period
+- DLC
+- Fingerprint score
+- Status
+
+#### Incidents
+
+Displays investigation-oriented alert information:
+
+- Timestamp
+- Severity
+- Classification
+- CAN ID
+- ML anomaly score
+- Confidence
+- Detection reason
+- Evidence
+
+The dashboard receives telemetry from \`CANMonitor\` through Qt signals and persists frames, incidents, and ECU profiles through the SQLite database layer.
+
+---
+
 ## Requirements
 
 Recommended:
