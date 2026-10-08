@@ -429,3 +429,26 @@ See [`report/PROJECT_REPORT.md`](report/PROJECT_REPORT.md) for a ready-to-use co
 ## Safety / responsible use
 
 This repository is intentionally limited to a virtual CAN environment. Do not connect the simulator, monitor, or sniffer to a real vehicle or safety-critical automotive bus. Real automotive security research requires explicit authorization, isolation, and professional safety engineering.
+
+
+## Test Results
+
+The following screenshots show the CAN-Sentinel SOC dashboard during defensive testing in the isolated Linux virtual CAN lab.
+
+### Live CAN Traffic
+
+![Live CAN Traffic](screenshots/test-results-traffic.png)
+
+### ECU Behavioral Fingerprints
+
+![ECU Behavioral Fingerprints](screenshots/test-results-ecu-fingerprints.png)
+
+### Detected Incidents
+
+![Detected Incidents](screenshots/test-results-incidents.png)
+
+### Monitoring & Anomaly Detection
+
+![Monitoring & Anomaly Detection](screenshots/test-results-overview.png)
+
+These results demonstrate live CAN traffic monitoring, ECU behavioral fingerprinting, incident generation, and Isolation Forest anomaly scoring during the test run.
