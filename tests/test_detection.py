@@ -25,6 +25,27 @@ def test_feature_shape():
     assert w.unique_ids == 2
 
 
+def test_empty_window_returns_zeroed_features():
+    w = build_features([], 1.0, set(), {})
+
+    assert w.frames == 0
+    assert w.fps == 0.0
+    assert w.unique_ids == 0
+    assert w.top_id is None
+    assert w.feature_vector.shape == (8,)
+    assert not w.feature_vector.any()
+
+
+def test_non_positive_duration_is_guarded():
+    messages = [(0.0, 0x100, 8, b"\x00" * 8)]
+
+    w = build_features(messages, 0.0)
+
+    assert w.frames == 1
+    assert w.fps > 0
+    assert w.feature_vector.shape == (8,)
+
+
 def test_unknown_id_is_classified():
     rows = normal_messages() + [
         (0.90 + i * 0.001, 0x321, 8, b"INJECT!!") for i in range(10)
@@ -43,3 +64,26 @@ def test_normal_is_not_alert():
     per_id = {0x100: 20.0, 0x110: 10.0}
     result = classify(w, 0.2, 30.0, per_id, {0x100: 8, 0x110: 8})
     assert not result.is_alert
+    assert result.classification == "Normal"
+
+
+def test_dlc_deviation_is_counted_once_per_can_id():
+    messages = [
+        (0.00, 0x100, 8, b"\x00" * 8),
+        (0.10, 0x100, 6, b"\x00" * 6),
+        (0.20, 0x100, 5, b"\x00" * 5),
+        (0.30, 0x110, 8, b"\x01" * 8),
+    ]
+
+    w = build_features(messages, 1.0, {0x100, 0x110}, {0x100: 8, 0x110: 8})
+
+    assert w.dlc_deviations == 1
+    assert w.feature_vector[6] == 1
+
+
+def test_repeated_payloads_raise_replay_ratio():
+    messages = [(i * 0.01, 0x100, 8, b"REPLAY!!") for i in range(10)]
+
+    w = build_features(messages, 1.0, {0x100}, {0x100: 8})
+
+    assert w.replay_ratio == 1.0
