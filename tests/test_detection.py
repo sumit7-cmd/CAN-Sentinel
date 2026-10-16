@@ -13,7 +13,7 @@ def normal_messages():
         rows.append((t, 0x100, 8, bytes([i % 5, 0, 0, 0, 0, 0, 0, 0])))
         t += 0.05
     for i in range(10):
-        rows.append((i * 0.1, 0x110, 8, b"\\x01" * 8))
+        rows.append((i * 0.1, 0x110, 8, b"\x01" * 8))
     rows.sort()
     return rows
 
@@ -37,7 +37,7 @@ def test_empty_window_returns_zeroed_features():
 
 
 def test_non_positive_duration_is_guarded():
-    messages = [(0.0, 0x100, 8, b"\\x00" * 8)]
+    messages = [(0.0, 0x100, 8, b"\x00" * 8)]
 
     w = build_features(messages, 0.0)
 
@@ -69,10 +69,10 @@ def test_normal_is_not_alert():
 
 def test_dlc_deviation_is_counted_once_per_can_id():
     messages = [
-        (0.00, 0x100, 8, b"\\x00" * 8),
-        (0.10, 0x100, 6, b"\\x00" * 6),
-        (0.20, 0x100, 5, b"\\x00" * 5),
-        (0.30, 0x110, 8, b"\\x01" * 8),
+        (0.00, 0x100, 8, b"\x00" * 8),
+        (0.10, 0x100, 6, b"\x00" * 6),
+        (0.20, 0x100, 5, b"\x00" * 5),
+        (0.30, 0x110, 8, b"\x01" * 8),
     ]
 
     w = build_features(messages, 1.0, {0x100, 0x110}, {0x100: 8, 0x110: 8})
