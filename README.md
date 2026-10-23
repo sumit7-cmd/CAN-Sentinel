@@ -420,7 +420,7 @@ pip install pytest
 pytest -q
 ```
 
-The test suite covers feature extraction, attack classification, and ECU fingerprint calculations.
+The test suite covers feature extraction, attack classification, ECU fingerprint calculations, empty windows, duration edge cases, DLC deviations, flood alerts, and replay-like payload patterns.
 
 ## Project report
 
