@@ -6,7 +6,7 @@
 
 **SOC-style Automotive ECU Intrusion Detection Platform for an isolated Linux virtual CAN lab.**
 
-A defensive automotive cybersecurity laboratory project built around a **Linux virtual CAN (`vcan0`)** network.
+A defensive CAN security project for isolated labs built around a **Linux virtual CAN (`vcan0`)** network.
 
 V2 adds:
 
